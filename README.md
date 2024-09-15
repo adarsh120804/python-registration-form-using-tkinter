@@ -1,20 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-import re
-
-# Function to validate password strength
-def validate_password(password):
-    if len(password) < 8:
-        return "Password must be at least 8 characters long."
-    if not re.search(r'[A-Z]', password):
-        return "Password must contain at least one uppercase letter."
-    if not re.search(r'[a-z]', password):
-        return "Password must contain at least one lowercase letter."
-    if not re.search(r'[0-9]', password):
-        return "Password must contain at least one number."
-    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        return "Password must contain at least one special character (e.g., @, #, $, etc.)."
-    return None
 
 # Function to handle form submission
 def submit_form():
@@ -44,12 +29,6 @@ def submit_form():
         messagebox.showerror("Input Error", "Passwords do not match!")
         return
 
-    # Validate password against guidelines
-    password_error = validate_password(password)
-    if password_error:
-        messagebox.showerror("Password Error", password_error)
-        return
-
     messagebox.showinfo("Registration Successful", "You have been registered successfully!")
 
 # Function to minimize the window when ESC is pressed
@@ -68,26 +47,30 @@ screen_height = root.winfo_screenheight()
 root.geometry(f"{screen_width}x{screen_height}")
 
 # Define colors
-header_color = "#003366"  # Dark blue
-footer_color = "#003366"  # Dark blue
+header_color = "#8B8589"  # Taupe gray
+footer_color = "#8B8589"  # Taupe gray
 form_bg_color = "#F4F4F4"  # Light grey
 button_color = "#0066cc"  # Medium blue
 button_hover_color = "#004d99"  # Darker blue
 
-# Create a frame for the header with blue background
-header_frame = tk.Frame(root, bg=header_color, pady=20)
+# Create a frame for the header with taupe gray background
+header_frame = tk.Frame(root, bg=header_color, pady=10)
 header_frame.grid(row=0, column=0, sticky="ew")
 
-title_label = tk.Label(header_frame, text="Next24Technology Registration Form", font=("Helvetica", 25, "bold"), fg="#FFFFFF", bg=header_color)
+title_label = tk.Label(header_frame, text="Next24Technology Registration Form", font=("Helvetica", 20, "bold"), fg="#000000", bg=header_color)
 title_label.pack()
 
 # Create a frame for the main content
 main_frame = tk.Frame(root)
 main_frame.grid(row=1, column=0, sticky="nsew")
 
-# Create a frame for the form
-form_frame = tk.Frame(main_frame, bg=form_bg_color, padx=30, pady=20, relief="solid", bd=2)
-form_frame.pack(padx=30, pady=20, fill="both", expand=True)
+# Create a frame for the form that fills the main content area
+form_frame = tk.Frame(main_frame, bg=form_bg_color, padx=20, pady=20, relief="solid", bd=2)
+form_frame.pack(padx=20, pady=20, fill="both", expand=True)
+
+# Create a frame for all fields that fills the form_frame
+fields_frame = tk.Frame(form_frame, bg=form_bg_color)
+fields_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
 # Dictionary to store the entry fields
 entries = {}
@@ -107,22 +90,22 @@ fields = [
     ("Confirm Password:", "confirm_password")
 ]
 
-# Add labels and entry fields
+# Add labels and entry fields to fields_frame
 for index, (label_text, var_name) in enumerate(fields):
-    tk.Label(form_frame, text=label_text, bg=form_bg_color, font=("Helvetica", 14)).grid(row=index, column=0, sticky="w", pady=10, padx=10)
+    tk.Label(fields_frame, text=label_text, bg=form_bg_color, font=("Helvetica", 12)).grid(row=index, column=0, sticky="w", pady=5, padx=5)
     if var_name == "gender":
         # Gender Radio Buttons
-        gender_frame = tk.Frame(form_frame, bg=form_bg_color)
-        gender_frame.grid(row=index, column=1, pady=10, padx=10, sticky="ew")
+        gender_frame = tk.Frame(fields_frame, bg=form_bg_color)
+        gender_frame.grid(row=index, column=1, pady=5, padx=5, sticky="ew")
         
-        tk.Radiobutton(gender_frame, text="Male", variable=gender_var, value="Male", bg=form_bg_color, font=("Helvetica", 14)).pack(side="left", padx=5)
-        tk.Radiobutton(gender_frame, text="Female", variable=gender_var, value="Female", bg=form_bg_color, font=("Helvetica", 14)).pack(side="left", padx=5)
-        tk.Radiobutton(gender_frame, text="Other", variable=gender_var, value="Other", bg=form_bg_color, font=("Helvetica", 14)).pack(side="left", padx=5)
+        tk.Radiobutton(gender_frame, text="Male", variable=gender_var, value="Male", bg=form_bg_color, font=("Helvetica", 10)).pack(side="left", padx=2)
+        tk.Radiobutton(gender_frame, text="Female", variable=gender_var, value="Female", bg=form_bg_color, font=("Helvetica", 10)).pack(side="left", padx=2)
+        tk.Radiobutton(gender_frame, text="Other", variable=gender_var, value="Other", bg=form_bg_color, font=("Helvetica", 10)).pack(side="left", padx=2)
     else:
-        entry = tk.Entry(form_frame, font=("Helvetica", 14), width=50, bd=2, relief="solid")
+        entry = tk.Entry(fields_frame, font=("Helvetica", 12), width=50, bd=2, relief="solid")
         if var_name in ["password", "confirm_password"]:
             entry.config(show="*")
-        entry.grid(row=index, column=1, pady=10, padx=10, sticky="ew")
+        entry.grid(row=index, column=1, pady=5, padx=5, sticky="ew")
         entries[var_name] = entry
 
 # Password Guidelines
@@ -133,15 +116,15 @@ guidelines = [
     "• Includes at least one special character (e.g., @, #, $)"
 ]
 
-guidelines_label = tk.Label(form_frame, text="Password Guidelines:", bg=form_bg_color, font=("Helvetica", 10, "bold"))
-guidelines_label.grid(row=len(fields), column=0, sticky="w", pady=8, padx=8, columnspan=1)
+guidelines_label = tk.Label(form_frame, text="Password Guidelines:", bg=form_bg_color, font=("Helvetica", 12, "bold"))
+guidelines_label.pack(anchor="w", padx=10, pady=5)
 
-for idx, guideline in enumerate(guidelines):
-    tk.Label(form_frame, text=guideline, bg=form_bg_color, font=("Helvetica", 8)).grid(row=len(fields) + 1 + idx, column=0, sticky="w", padx=8, columnspan=1)
+for guideline in guidelines:
+    tk.Label(form_frame, text=guideline, bg=form_bg_color, font=("Helvetica", 10)).pack(anchor="w", padx=20, pady=2)
 
 # Submit Button
-submit_button = tk.Button(form_frame, text="Register", command=submit_form, font=("Helvetica", 16, "bold"), bg=button_color, fg="#ffffff", height=2, width=20)
-submit_button.grid(row=len(fields) + len(guidelines) + 1, column=0, columnspan=2, pady=20)
+submit_button = tk.Button(form_frame, text="Register", command=submit_form, font=("Helvetica", 14, "bold"), bg=button_color, fg="#ffffff", height=2, width=20)
+submit_button.pack(pady=20)
 
 # Button hover effects
 def on_enter(event):
@@ -153,17 +136,20 @@ def on_leave(event):
 submit_button.bind("<Enter>", on_enter)
 submit_button.bind("<Leave>", on_leave)
 
-# Footer with blue background
-footer_frame = tk.Frame(root, bg=footer_color, pady=10)
+# Footer with taupe gray background
+footer_frame = tk.Frame(root, bg="#555555" , pady=10)
 footer_frame.grid(row=2, column=0, sticky="ew")
 
-footer_label = tk.Label(footer_frame, text="© 2023 Next24Technology. All rights reserved.", font=("Helvetica", 12), fg="#FFFFFF", bg=footer_color)
+footer_label = tk.Label(footer_frame, text="© 2023 Next24Technology. All rights reserved.", font=("Helvetica", 10), fg="#FFFFFF", bg="#555555")
 footer_label.pack()
 
 # Configure row and column weights
 root.grid_rowconfigure(1, weight=1)  # Make the main_frame expand
 root.grid_rowconfigure(2, weight=0)  # Footer frame stays at the bottom
 root.grid_columnconfigure(0, weight=1)  # Make the column expand
+
+main_frame.grid_rowconfigure(0, weight=1)  # Make the form_frame expand
+main_frame.grid_columnconfigure(0, weight=1)  # Make the column expand
 
 # Bind the ESC key to minimize the window
 root.bind("<Escape>", minimize_window)
